@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import edu.student.entities.Student;
 import edu.student.services.StudentService;
+import edu.student.vo.StudentCollegeValueObject;
 @RestController
 @RequestMapping("/student-info")
 public class StudentController {
@@ -29,7 +30,7 @@ public class StudentController {
 		return stuService.findAll();
 	}
 	@GetMapping("/students/{id}")
-	public Optional<Student> findById(@PathVariable("id")  Integer id)
+	public StudentCollegeValueObject findById(@PathVariable("id")  Integer id)
 	{
 		return stuService.findById(id);
 	}
@@ -40,20 +41,17 @@ public class StudentController {
 		return stuService.save(s);
 	}
 	@PutMapping("/students/{id}")
-	public Optional<Student> update(@PathVariable("id") Integer id, @RequestBody Student s)
+	public Student update(@PathVariable("id") Integer id, @RequestBody Student s)
 	{
-		Optional<Student> stu=stuService.findById(id);
-		stu.ifPresent(
-				st -> {
-					st.setCollegeId(s.getCollegeId());
-					st.setContact(s.getContact());
-					st.setEmailId(s.getEmailId());
-					st.setStudentName(s.getStudentName());
-					st.setStudentId(id);
-					stuService.save(st);
-				}
-				);
-		return stuService.findById(id);
+		StudentCollegeValueObject vo=stuService.findById(id);
+		Student st=vo.getStudent();
+		st.setCollegeId(s.getCollegeId());
+		st.setContact(s.getContact());
+		st.setEmailId(s.getEmailId());
+		st.setStudentName(s.getStudentName());
+		st.setStudentId(id);
+		stuService.save(st);
+		return stuService.findById(id).getStudent();
 	}
 	@DeleteMapping("/students/{id}")
 	public String delete(@PathVariable("id") Integer id)
