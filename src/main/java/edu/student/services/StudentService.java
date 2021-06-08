@@ -3,6 +3,7 @@ package edu.student.services;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
@@ -17,6 +18,7 @@ public class StudentService {
 	@Autowired
 	StudentRepository stuRepo;
 	@Autowired
+	/* @Qualifier(value = "remoteRestTemplate") */
 	RestTemplate restTemplate;
 
 	public Iterable<Student> findAll() {
@@ -25,7 +27,7 @@ public class StudentService {
 
 	public StudentCollegeValueObject findById(Integer id) {
 		Optional<Student> student= stuRepo.findById(id);
-		College college = restTemplate.getForObject("http://localhost:8001/college-info/colleges/"+student.get().getCollegeId(), College.class);
+		College college = restTemplate.getForObject("http://college-service/college-info/colleges/"+student.get().getCollegeId(), College.class);
 		StudentCollegeValueObject vo=new StudentCollegeValueObject(student.get(), college);
 		return vo;
 	}
